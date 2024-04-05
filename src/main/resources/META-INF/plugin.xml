@@ -1,0 +1,43 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>ru.generate.dagger.DaggerGenerationPlugin</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>DaggerGenerationPlugin</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="misha_aid@mail.ru" url="https://www.yourcompany.com">MihailLovchitskiy</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>Plugin for generating boilerplate for dagger 2 framework such as module component, dependencies,
+        viewmodel e.t.c
+    </description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.android</depends>
+    <depends>com.intellij.modules.androidstudio</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+
+    </extensions>
+    <actions>
+        <group id = "DaggerPlugin.TopMenu"
+               text = "DaggerPlugin"
+               description="Dagger plugin toolbar menu">
+            <action id="ru.generate.dagger.daggergenerationplugin.TestAction"
+                    class="ru.generate.dagger.daggergenerationplugin.DataDialogAction"
+                    text="Test">
+                <keyboard-shortcut first-keystroke="control alt p" keymap="$default"/>
+            </action>
+            <add-to-group group-id="MainMenu" anchor="last"/>
+        </group>
+    </actions>
+</idea-plugin>

@@ -33,7 +33,7 @@
                text = "DaggerPlugin"
                description="Dagger plugin toolbar menu">
             <action id="ru.generate.dagger.daggergenerationplugin.TestAction"
-                    class="ru.generate.dagger.daggergenerationplugin.DataDialogAction"
+                    class="ru.generate.dagger.daggergenerationplugin.ui.DataDialogAction"
                     text="Test">
                 <keyboard-shortcut first-keystroke="control alt p" keymap="$default"/>
             </action>

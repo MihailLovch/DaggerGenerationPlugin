@@ -15,7 +15,7 @@ import javax.swing.JComponent
 
 class DataDialogAction : AnAction() {
 
-    private val generateDaggerComponentsUseCase by lazy {Locator.generateDaggerComponentsUseCase}
+    private val generateDaggerComponentsUseCase by lazy { Locator.generateDaggerComponentsUseCase }
 
     override fun actionPerformed(event: AnActionEvent) {
         DataDialogWrapper { json ->
@@ -35,7 +35,23 @@ private class DataDialogWrapper(
     private var textArea = JBTextArea()
     private var gradleCheckBox = JBCheckBox()
     private val exampleJson =
-        "{\"appModule\":\"app\",\"module\":\"feature-auth\",\"defaultPackage\":\"ru.kpfu.itis\",\"dependencies\":[{\"module\":\"common\",\"classes\":[\"NetworkProvide\",\"RoomProvider\"]}]}"
+        "{\"appModule\":\"app\"," +
+                "\"destinationModule\":\"feature.main\"," +
+                "\"destinationPackage\":\"com.study.main.di\"," +
+                "\"dependencies\":[" +
+                "{" +
+                "\"module\":\"core.common\"," +
+                "\"classes\":[" +
+                "\"DataStoreProvider\"," +
+                "\"NetworkSource\"" +
+                "]" +
+                "}," +
+                "{" +
+                "\"module\":\"core.database\"," +
+                "\"classes\":[" +
+                "\"Database\"]}" +
+                "]" +
+                "}"
 
     init {
         init()

@@ -32,6 +32,6 @@ class DaggerRepositoryImpl(
                     null
                 }
             }
-        }.also { notificationManager.showErrorNotification(notFoundMessage.toString()) }
+        }.also { if (notFoundMessage.isNotEmpty()) notificationManager.showErrorNotification(notFoundMessage.toString()) }
     }
 }

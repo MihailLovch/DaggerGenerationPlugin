@@ -1,4 +1,4 @@
-package ru.generate.dagger.daggergenerationplugin.repository
+package ru.generate.dagger.daggergenerationplugin.data.repository
 
 import ru.generate.dagger.daggergenerationplugin.data.ParserResponse
 import ru.generate.dagger.daggergenerationplugin.data.ProjectParser

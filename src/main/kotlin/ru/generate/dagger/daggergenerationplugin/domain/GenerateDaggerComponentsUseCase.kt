@@ -2,7 +2,7 @@ package ru.generate.dagger.daggergenerationplugin.domain
 
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import ru.generate.dagger.daggergenerationplugin.repository.DaggerRepository
+import ru.generate.dagger.daggergenerationplugin.data.repository.DaggerRepository
 
 class GenerateDaggerComponentsUseCase(
     private val daggerRepository: DaggerRepository

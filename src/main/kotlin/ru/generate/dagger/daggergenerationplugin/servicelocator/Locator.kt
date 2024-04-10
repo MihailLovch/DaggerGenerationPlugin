@@ -3,8 +3,8 @@ package ru.generate.dagger.daggergenerationplugin.servicelocator
 import com.intellij.openapi.project.Project
 import ru.generate.dagger.daggergenerationplugin.data.ProjectParser
 import ru.generate.dagger.daggergenerationplugin.domain.GenerateDaggerComponentsUseCase
-import ru.generate.dagger.daggergenerationplugin.repository.DaggerRepository
-import ru.generate.dagger.daggergenerationplugin.repository.DaggerRepositoryImpl
+import ru.generate.dagger.daggergenerationplugin.data.repository.DaggerRepository
+import ru.generate.dagger.daggergenerationplugin.data.repository.DaggerRepositoryImpl
 import ru.generate.dagger.daggergenerationplugin.util.NotificationManager
 
 object Locator {

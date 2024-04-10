@@ -9,18 +9,21 @@ class GenerateDaggerComponentsUseCase(
 ) {
 
     operator fun invoke(daggerConfig: DaggerConfig) {
+        val requiredClasses = mutableListOf<String>()
         daggerConfig.dependencies.forEach { dependency ->
             daggerRepository.findClasses(
                 dependency.classes,
                 dependency.module
             ).ifNotEmpty {
-                Messages.showMessageDialog(
-                    null,
-                    "Found class: $this",
-                    "Information",
-                    Messages.getInformationIcon()
-                )
+//                Messages.showMessageDialog(
+//                    null,
+//                    "Found class: $this",
+//                    "Information",
+//                    Messages.getInformationIcon()
+//                )
+                requiredClasses.addAll(this)
             }
         }
+        daggerRepository.generateClass("","feature.main", requiredClasses)
     }
 }

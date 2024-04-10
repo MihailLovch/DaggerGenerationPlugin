@@ -59,6 +59,8 @@ private class DataDialogWrapper(
         setOKButtonText("Generate")
     }
 
+    //TODO : add 4 checkboxes for generating not all 4 classes
+
     override fun createCenterPanel(): JComponent {
         return panel {
             row {

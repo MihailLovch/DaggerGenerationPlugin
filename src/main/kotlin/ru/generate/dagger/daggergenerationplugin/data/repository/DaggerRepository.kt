@@ -1,5 +1,6 @@
 package ru.generate.dagger.daggergenerationplugin.data.repository
 
+import ru.generate.dagger.daggergenerationplugin.data.FileGenerator
 import ru.generate.dagger.daggergenerationplugin.data.ParserResponse
 import ru.generate.dagger.daggergenerationplugin.data.ProjectParser
 import ru.generate.dagger.daggergenerationplugin.util.NotificationManager
@@ -7,10 +8,13 @@ import ru.generate.dagger.daggergenerationplugin.util.NotificationManager
 interface DaggerRepository {
 
     fun findClasses(classNames: List<String>, moduleName: String): List<String>
+
+    fun generateClass(className: String, moduleName: String, requiredClasses: List<String>)
 }
 
 class DaggerRepositoryImpl(
     private val projectParser: ProjectParser,
+    private val fileGenerator: FileGenerator,
     private val notificationManager: NotificationManager
 ) : DaggerRepository {
 
@@ -33,5 +37,9 @@ class DaggerRepositoryImpl(
                 }
             }
         }.also { if (notFoundMessage.isNotEmpty()) notificationManager.showErrorNotification(notFoundMessage.toString()) }
+    }
+
+    override fun generateClass(className: String, moduleName: String, requiredClasses: List<String>) {
+        fileGenerator.generateClassInModule(moduleName,requiredClasses)
     }
 }

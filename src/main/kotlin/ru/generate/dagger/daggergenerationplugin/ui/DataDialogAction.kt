@@ -37,7 +37,6 @@ private class DataDialogWrapper(
     private val exampleJson =
         "{\"appModule\":\"app\"," +
                 "\"destinationModule\":\"feature.main\"," +
-                "\"destinationPackage\":\"com.study.main.di\"," +
                 "\"dependencies\":[" +
                 "{" +
                 "\"module\":\"core.common\"," +

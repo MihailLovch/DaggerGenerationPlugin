@@ -21,7 +21,8 @@ object Locator {
     val fileGenerator by lazy {
         FileGenerator(
             project = project,
-            projectParser = projectParser
+            projectParser = projectParser,
+            notificationManager = notificationManager
         )
     }
 
@@ -32,7 +33,7 @@ object Locator {
     }
 
     val notificationManager by lazy {
-        NotificationManager(project)
+        NotificationManager()
     }
 
     val daggerRepository: DaggerRepository by lazy {

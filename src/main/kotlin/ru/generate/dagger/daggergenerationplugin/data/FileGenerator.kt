@@ -2,19 +2,20 @@ package ru.generate.dagger.daggergenerationplugin.data
 
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
-import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.idea.kdoc.insert
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import ru.generate.dagger.daggergenerationplugin.util.NotificationManager
 
 
 class FileGenerator(
     private val project: Project,
-    private val projectParser: ProjectParser
+    private val projectParser: ProjectParser,
+    private val notificationManager: NotificationManager
 ) {
     private val psiFactory = KtPsiFactory(project)
-    private val codeStyleManager = CodeStyleManager.getInstance(project)
-    private val psiDocumentManager = PsiDocumentManager.getInstance(project)
 
     fun generateClassesInModule(moduleName: String, files: List<Pair<String, String>>) {
         val packageDir = findOrCreatePackageDirectory(project, moduleName)
@@ -29,7 +30,7 @@ class FileGenerator(
                 try {
                     packageDir.add(newFile)
                 } catch (ignored: Exception) {
-                    // TODO: error message that file already exists
+                    notificationManager.showErrorNotification("${newFile.name} already exists")
                 }
             }
         }

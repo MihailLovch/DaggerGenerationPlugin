@@ -4,6 +4,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.kdoc.insert
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 
@@ -15,7 +16,7 @@ class FileGenerator(
     private val codeStyleManager = CodeStyleManager.getInstance(project)
     private val psiDocumentManager = PsiDocumentManager.getInstance(project)
 
-    fun generateClassesInModule(moduleName: String, files: List<Pair<String,String>>) {
+    fun generateClassesInModule(moduleName: String, files: List<Pair<String, String>>) {
         val packageDir = findOrCreatePackageDirectory(project, moduleName)
             ?: run {
                 println("Package directory not found for module: $moduleName")
@@ -27,12 +28,10 @@ class FileGenerator(
             }.forEach { newFile ->
                 try {
                     packageDir.add(newFile)
-                } catch (ignored: Exception){
+                } catch (ignored: Exception) {
                     // TODO: error message that file already exists
                 }
             }
-            // TODO: change build.gradle file, add modules as dependencies. Example: implementation(project(":core:common"))
-            // TODO: change/create appComponent
         }
     }
 
@@ -51,12 +50,34 @@ class FileGenerator(
             if (!content.toString().contains("import $depsQualifiedName")) {
                 content.insert(findImportPosition(content.toString()), "\nimport $depsQualifiedName")
             }
+            if (appComponent.text != content.toString()) {
+                val dir = appComponent.parent
+                appComponent.delete()
+                dir?.createFile("AppComponent.kt")?.apply {
+                    virtualFile.setBinaryContent(content.toString().toByteArray())
+                }
+            }
+        }
+    }
 
-            //TODO: change build.gradle file in app module
-            val dir = appComponent.parent
-            appComponent.delete()
-            dir?.createFile("AppComponent.kt")?.apply {
-                virtualFile.setBinaryContent(content.toString().toByteArray())
+    fun addGradleDependency(gradleFile: PsiFile, depsNames: List<String>) {
+        WriteCommandAction.runWriteCommandAction(project) {
+            val content = StringBuilder(gradleFile.text)
+            depsNames.forEach { name ->
+                val addDeps = "implementation(project(\"$name\"))"
+                if (!content.toString().contains(addDeps)) {
+                    content.insert(
+                        content.toString().indexOf("dependencies {") + "dependencies {".length,
+                        "\n    $addDeps"
+                    )
+                }
+            }
+            if (gradleFile.text != content.toString()) {
+                val dir = gradleFile.parent
+                gradleFile.delete()
+                dir?.createFile("build.gradle.kts")?.apply {
+                    virtualFile.setBinaryContent(content.toString().toByteArray())
+                }
             }
         }
     }

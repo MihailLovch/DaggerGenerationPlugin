@@ -19,7 +19,7 @@ class GenerateDaggerComponentsUseCase(
                 foundModules.add(dependency.module)
             }
         }
-        daggerRepository.generateFeatureClasses(destinationModule, requiredClasses, foundModules)
-        daggerRepository.editAppComponent(destinationModule, appModule)
+        daggerRepository.generateFeatureClasses(destinationModule, requiredClasses, foundModules, changeGradle)
+        daggerRepository.editAppComponent(destinationModule, appModule, changeGradle)
     }
 }

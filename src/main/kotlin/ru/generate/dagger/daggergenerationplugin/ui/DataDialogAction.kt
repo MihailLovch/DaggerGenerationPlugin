@@ -18,10 +18,10 @@ class DataDialogAction : AnAction() {
     private val generateDaggerComponentsUseCase by lazy { Locator.generateDaggerComponentsUseCase }
 
     override fun actionPerformed(event: AnActionEvent) {
-        DataDialogWrapper { json ->
+        DataDialogWrapper { json, changeGradle ->
             Locator.injectProject(event.project ?: throw NullPointerException())
             generateDaggerComponentsUseCase(
-                daggerConfig = JsonUtil.toDaggerConfig(json)
+                daggerConfig = JsonUtil.toDaggerConfig(json).apply { this.changeGradle = changeGradle }
             )
         }.show()
     }
@@ -29,7 +29,7 @@ class DataDialogAction : AnAction() {
 
 
 private class DataDialogWrapper(
-    private val onGenerateClicked: (String) -> Unit
+    private val onGenerateClicked: (String, Boolean) -> Unit
 ) : DialogWrapper(true) {
 
     private var textArea = JBTextArea()
@@ -92,6 +92,6 @@ private class DataDialogWrapper(
 
     override fun doOKAction() {
         super.doOKAction()
-        onGenerateClicked(textArea.text)
+        onGenerateClicked(textArea.text, gradleCheckBox.isSelected)
     }
 }

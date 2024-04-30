@@ -11,9 +11,14 @@ interface DaggerRepository {
 
     fun findClasses(classNames: List<String>, moduleName: String): List<String>
 
-    fun generateFeatureClasses(moduleName: String, requiredClasses: List<String>, foundModules: List<String>)
+    fun generateFeatureClasses(
+        moduleName: String,
+        requiredClasses: List<String>,
+        foundModules: List<String>,
+        editGradleFile: Boolean
+    )
 
-    fun editAppComponent(moduleName: String, appModuleName: String)
+    fun editAppComponent(moduleName: String, appModuleName: String, editGradleFile: Boolean)
 }
 
 class DaggerRepositoryImpl(
@@ -40,13 +45,19 @@ class DaggerRepositoryImpl(
                     null
                 }
             }
-        }.also { if (notFoundMessage.isNotEmpty()) notificationManager.showErrorNotification(notFoundMessage.toString()) }
+        }
+            .also { if (notFoundMessage.isNotEmpty()) notificationManager.showErrorNotification(notFoundMessage.toString()) }
     }
 
-    override fun generateFeatureClasses(moduleName: String, requiredClasses: List<String>, foundModules: List<String>) {
+    override fun generateFeatureClasses(
+        moduleName: String,
+        requiredClasses: List<String>,
+        foundModules: List<String>,
+        editGradleFile: Boolean
+    ) {
         val className = moduleName.split(".").last().capitalizedName()
         val packageName =
-            projectParser.getLastRootPackageWithMultipleSubpackages(moduleName) ?: throw NullPointerException()
+            projectParser.getLastRootPackageWithMultipleSubpackages(moduleName) ?: throw RuntimeException()
         val files = listOf(
             "${className}Component.kt" to buildComponentClass(packageName, className),
             "${className}ViewModel.kt" to buildViewModelClass(packageName, className),
@@ -54,28 +65,44 @@ class DaggerRepositoryImpl(
             "${className}Dependencies.kt" to buildDependenciesClass(packageName, className, requiredClasses)
         )
         fileGenerator.generateClassesInModule(moduleName, files)
-        projectParser.findBuildGradleFileInModule(moduleName)?.let {
-            fileGenerator.addGradleDependency(it, foundModules.map {module-> ":${module.replace('.', ':')}" })
+        if (editGradleFile) {
+            projectParser.findBuildGradleFileInModule(moduleName)?.let {
+                fileGenerator.addGradleDependency(it, foundModules.map { module -> ":${module.replace('.', ':')}" })
+            }
         }
     }
 
-    override fun editAppComponent(moduleName: String, appModuleName: String) {
+    override fun editAppComponent(
+        moduleName: String,
+        appModuleName: String,
+        editGradleFile: Boolean
+    ) {
         val depsInterface = moduleName.split(".").last().capitalizedName() + "Dependencies"
-        val appModule = projectParser.findMainModule(appModuleName) ?: throw NullPointerException("app module not found")
+        val appModule =
+            projectParser.findMainModule(appModuleName) ?: throw RuntimeException("app module not found")
         val appPackageName =
-            projectParser.getLastRootPackageWithMultipleSubpackages(appModuleName) ?: throw NullPointerException()
-        val featureModule = projectParser.findMainModule(moduleName) ?: throw NullPointerException("feature module not found")
-        val depsFullName = (projectParser.getQualifiedClassName(depsInterface,featureModule) as ParserResponse.ClassFound).qualifiedClassName
+            projectParser.getLastRootPackageWithMultipleSubpackages(appModuleName) ?: throw RuntimeException()
+        val featureModule =
+            projectParser.findMainModule(moduleName) ?: throw RuntimeException("feature module not found")
+        val depsFullName = (projectParser.getQualifiedClassName(
+            depsInterface,
+            featureModule
+        ) as ParserResponse.ClassFound).qualifiedClassName
 
         projectParser.findFile(
             module = appModule,
             fileName = "AppComponent.kt"
         )?.let {
             fileGenerator.appendAppComponent(it, depsFullName)
-        } ?: fileGenerator.generateClassesInModule(appModuleName, listOf("AppComponent.kt" to buildAppComponentClass(appPackageName,depsFullName)))
+        } ?: fileGenerator.generateClassesInModule(
+            appModuleName,
+            listOf("AppComponent.kt" to buildAppComponentClass(appPackageName, depsFullName))
+        )
 
-        projectParser.findBuildGradleFileInModule(appModuleName)?.let {
-            fileGenerator.addGradleDependency(it, listOf(":${moduleName.replace('.',':')}"))
+        if (editGradleFile){
+            projectParser.findBuildGradleFileInModule(appModuleName)?.let {
+                fileGenerator.addGradleDependency(it, listOf(":${moduleName.replace('.', ':')}"))
+            }
         }
     }
 }

@@ -1,17 +1,10 @@
 package ru.generate.dagger.daggergenerationplugin.data
 
-import com.android.tools.idea.appinspection.inspectors.backgroundtask.view.capitalizedName
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import ru.generate.dagger.daggergenerationplugin.data.builder.buildComponentClass
-import ru.generate.dagger.daggergenerationplugin.data.builder.buildDependenciesClass
-import ru.generate.dagger.daggergenerationplugin.data.builder.buildDepsProviderClass
-import ru.generate.dagger.daggergenerationplugin.data.builder.buildViewModelClass
 
 
 class FileGenerator(

@@ -12,7 +12,7 @@ repositories {
 }
 
 intellij {
-    localPath = "/Users/mihail/Applications/Android Studio.app/Contents"
+    localPath = "C:\\Users\\MihailLovch\\AppData\\Local\\JetBrains\\Toolbox\\apps\\AndroidStudio\\ch-0\\232.10300.40.2321.11567975"
     plugins.set(listOf("android","Kotlin"))
 }
 
@@ -34,7 +34,7 @@ tasks {
         untilBuild.set("241.*")
     }
     runIde {
-        ideDir.set(file("/Users/mihail/Applications/Android Studio.app/Contents"))
+        ideDir.set(file("C:\\Users\\MihailLovch\\AppData\\Local\\JetBrains\\Toolbox\\apps\\AndroidStudio\\ch-0\\232.10300.40.2321.11567975"))
     }
 
     signPlugin {

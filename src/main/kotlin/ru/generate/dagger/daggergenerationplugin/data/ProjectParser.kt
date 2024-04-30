@@ -3,7 +3,10 @@ package ru.generate.dagger.daggergenerationplugin.data
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modules
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiFile
+import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 
@@ -26,7 +29,6 @@ class ProjectParser(
 
     fun getQualifiedClassNames(classNames: List<String>, moduleName: String): List<ParserResponse> {
         val module = findModule(moduleName) ?: return listOf(ParserResponse.Error.ModuleNotFound(moduleName))
-
         return classNames.map {
             getQualifiedClassName(it, module)
         }
@@ -39,18 +41,23 @@ class ProjectParser(
         }
     }
 
+    fun findFile(module: Module, fileName: String): PsiFile? {
+        val moduleScope = GlobalSearchScope.moduleScope(module)
+        return FilenameIndex.getFilesByName(project,"$fileName.kt", moduleScope).firstOrNull()
+    }
+
 
     fun getLastRootPackageWithMultipleSubpackages(moduleName: String): String? {
         val psiFacade = JavaPsiFacade.getInstance(project)
-        val moduleScope = GlobalSearchScope.moduleScope(findModule(moduleName)!!)
+        val moduleScope = GlobalSearchScope.moduleScope(findModule(moduleName) ?: return null)
 
         var currentPackage = psiFacade.findPackage("")
         var subPackages = currentPackage?.getSubPackages(moduleScope)
 
-        while (subPackages?.size!! == 1) {
-            currentPackage = subPackages.first()
+        do {
+            currentPackage = subPackages?.first()
             subPackages = currentPackage?.getSubPackages(moduleScope)
-        }
+        }while (subPackages?.size!! == 1)
 
         return currentPackage?.qualifiedName
     }

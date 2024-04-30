@@ -1,7 +1,5 @@
 package ru.generate.dagger.daggergenerationplugin.data.builder
 
-import androidx.compose.ui.text.toLowerCase
-
 fun buildComponentClass(packageName: String, featureName: String) = """
         package $packageName
         
@@ -52,20 +50,25 @@ fun buildDepsProviderClass(packageName: String, featureName: String) = """
     }
 """.trimIndent()
 
-fun buildDependenciesClass(packageName: String, featureName: String, requiredClasses: List<String>): String {
-
-    val classContent = StringBuilder()
-
-    classContent.append("package $packageName\n\n")
+fun buildDependenciesClass(packageName: String, featureName: String, requiredClasses: List<String>): String = buildString {
+    append("package $packageName\n\n")
     for (dependency in requiredClasses) {
-        classContent.append("import $dependency\n")
+        append("import $dependency\n")
     }
-    classContent.append("\n")
-    classContent.append("interface ${featureName}Dependencies {\n")
+    append("\n")
+    append("interface ${featureName}Dependencies {\n\n")
     for (dependency in requiredClasses.map { it.split(".").last() }) {
-        classContent.append("   fun provide${dependency}(): $dependency\n\n")
+        append("   fun provide${dependency}(): $dependency\n\n")
     }
-    classContent.append("}\n")
-
-    return classContent.toString()
+    append("}")
 }
+
+fun buildAppComponentClass(packageName: String, depsQualifiedName: String) = """
+    package $packageName
+
+    import dagger.Component
+    import $depsQualifiedName
+
+    @Component
+    interface AppComponent : ${depsQualifiedName.split(".").last()} 
+""".trimIndent()
